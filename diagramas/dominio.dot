@@ -1,0 +1,64 @@
+digraph Dominio {
+  rankdir=TB;
+  bgcolor="white";
+  node [shape=plaintext, fontname="Helvetica", fontsize=11];
+  edge [fontname="Helvetica", fontsize=10, color="#40506B"];
+
+  EntidadBase [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" color="#1F3864" bgcolor="#FFFFFF">
+      <tr><td bgcolor="#1F3864"><font color="white"><i>«abstracta»</i><br/><b>EntidadBase</b></font></td></tr>
+      <tr><td align="left">+ Id : int</td></tr>
+    </table>>];
+
+  Persona [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" color="#1F3864">
+      <tr><td bgcolor="#1F3864"><font color="white"><i>«abstracta»</i><br/><b>Persona</b></font></td></tr>
+      <tr><td align="left">+ Nombre : string<br align="left"/>+ Apellido : string<br align="left"/>+ Telefono : string<br align="left"/>+ Correo : string</td></tr>
+      <tr><td align="left">+ NombreCompleto : string</td></tr>
+    </table>>];
+
+  Paciente [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" color="#2E74B5">
+      <tr><td bgcolor="#2E74B5"><font color="white"><b>Paciente</b></font></td></tr>
+      <tr><td align="left">+ Cedula : string</td></tr>
+    </table>>];
+
+  Medico [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" color="#2E74B5">
+      <tr><td bgcolor="#2E74B5"><font color="white"><b>Medico</b></font></td></tr>
+      <tr><td align="left">+ Exequatur : string<br align="left"/>+ Especialidad : Especialidad</td></tr>
+      <tr><td align="left">+ AsignarEspecialidad(e)</td></tr>
+    </table>>];
+
+  Especialidad [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" color="#2E74B5">
+      <tr><td bgcolor="#2E74B5"><font color="white"><b>Especialidad</b></font></td></tr>
+      <tr><td align="left">+ Nombre : string<br align="left"/>+ Descripcion : string</td></tr>
+    </table>>];
+
+  Cita [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" color="#2E74B5">
+      <tr><td bgcolor="#2E74B5"><font color="white"><b>Cita</b></font></td></tr>
+      <tr><td align="left">+ Paciente : Paciente<br align="left"/>+ Medico : Medico<br align="left"/>+ FechaHora : DateTime<br align="left"/>+ Motivo : string<br align="left"/>+ Estado : EstadoCita<br align="left"/>+ Duracion : 30 min</td></tr>
+      <tr><td align="left">+ Reprogramar(fecha)<br align="left"/>+ Cancelar(motivo)<br align="left"/>+ SeSolapaCon(fecha) : bool</td></tr>
+    </table>>];
+
+  EstadoCita [label=<
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="5" color="#7F7F7F">
+      <tr><td bgcolor="#7F7F7F"><font color="white"><i>«enum»</i><br/><b>EstadoCita</b></font></td></tr>
+      <tr><td align="left">Programada<br align="left"/>Reprogramada<br align="left"/>Cancelada</td></tr>
+    </table>>];
+
+  edge [arrowhead=onormal, style=solid];
+  Persona -> EntidadBase;
+  Especialidad -> EntidadBase;
+  Cita -> EntidadBase;
+  Paciente -> Persona;
+  Medico -> Persona;
+
+  edge [arrowhead=vee, style=solid, color="#7F7F7F"];
+  Cita -> Paciente [label="  1"];
+  Cita -> Medico [label="  1"];
+  Medico -> Especialidad [label="  0..1"];
+  Cita -> EstadoCita [style=dashed, label="  estado"];
+}

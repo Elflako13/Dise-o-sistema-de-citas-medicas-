@@ -1,0 +1,78 @@
+digraph Arquitectura {
+  rankdir=LR;
+  bgcolor="white";
+  compound=true;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10, color="#1F3864", fillcolor="#FFFFFF"];
+  edge [fontname="Helvetica", fontsize=9, color="#40506B", arrowhead=vee];
+  graph [fontname="Helvetica", fontsize=11, labeljust="l", style="rounded", color="#B4C6E7"];
+
+  subgraph cluster_ui {
+    label="  UI (presentación)  ";
+    fontcolor="#1F3864";
+    MenuPrincipal; MenuPacientes; MenuMedicos; MenuEspecialidades; MenuCitas;
+  }
+
+  subgraph cluster_int {
+    label="  Interfaces (contratos pequeños - ISP)  ";
+    fontcolor="#1F3864";
+    node [fillcolor="#EAF1FB", shape=box];
+    IRegistroPacientes; IRegistroMedicos; IAsignacionEspecialidades; IRegistroEspecialidades;
+    IAgendaCitas; IConsultaCitas; ICancelacionCitas; IDisponibilidadAgenda;
+    IRecordatorioCitas; INotificador; "IRepositorio<T>";
+  }
+
+  subgraph cluster_srv {
+    label="  Services (lógica de negocio)  ";
+    fontcolor="#1F3864";
+    node [fillcolor="#E2EFDA"];
+    PacienteService; MedicoService; EspecialidadService; DisponibilidadAgendaService;
+    AgendaCitasService; ConsultaCitasService; CancelacionCitasService; RecordatorioService;
+  }
+
+  subgraph cluster_notif {
+    label="  Notificaciones (punto de extensión - OCP)  ";
+    fontcolor="#1F3864";
+    node [fillcolor="#FFF2CC"];
+    NotificadorCorreo;
+    NotificadorSms [label="NotificadorSms\n(futuro)", style="rounded,filled,dashed", fillcolor="#FFFFFF"];
+    NotificadorWhatsApp [label="NotificadorWhatsApp\n(futuro)", style="rounded,filled,dashed", fillcolor="#FFFFFF"];
+  }
+
+  subgraph cluster_rep {
+    label="  Repositories (datos)  ";
+    fontcolor="#1F3864";
+    node [fillcolor="#FBE5D6"];
+    "RepositorioEnMemoria<T>";
+  }
+
+  MenuPrincipal -> {MenuPacientes MenuMedicos MenuEspecialidades MenuCitas} [color="#B4C6E7"];
+  MenuPacientes -> IRegistroPacientes;
+  MenuMedicos -> IRegistroMedicos;
+  MenuMedicos -> IAsignacionEspecialidades;
+  MenuEspecialidades -> IRegistroEspecialidades;
+  MenuCitas -> IAgendaCitas;
+  MenuCitas -> IConsultaCitas;
+  MenuCitas -> ICancelacionCitas;
+  MenuCitas -> IRecordatorioCitas;
+
+  edge [arrowhead=onormal, style=dashed, color="#548235"];
+  PacienteService -> IRegistroPacientes;
+  MedicoService -> IRegistroMedicos;
+  MedicoService -> IAsignacionEspecialidades;
+  EspecialidadService -> IRegistroEspecialidades;
+  AgendaCitasService -> IAgendaCitas;
+  ConsultaCitasService -> IConsultaCitas;
+  CancelacionCitasService -> ICancelacionCitas;
+  DisponibilidadAgendaService -> IDisponibilidadAgenda;
+  RecordatorioService -> IRecordatorioCitas;
+  NotificadorCorreo -> INotificador;
+  NotificadorSms -> INotificador;
+  NotificadorWhatsApp -> INotificador;
+  "RepositorioEnMemoria<T>" -> "IRepositorio<T>";
+
+  edge [arrowhead=vee, style=solid, color="#7F7F7F"];
+  AgendaCitasService -> IDisponibilidadAgenda;
+  RecordatorioService -> INotificador [label=" lista de\n canales"];
+  {PacienteService AgendaCitasService} -> "IRepositorio<T>" [label=" y los demás servicios"];
+  CancelacionCitasService -> IConsultaCitas;
+}
